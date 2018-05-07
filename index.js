@@ -195,10 +195,11 @@ export default class QRCodeScanner extends Component {
           <Animated.View
             style={{
               opacity: this.state.fadeInOpacity,
-              backgroundColor: 'transparent'
+              backgroundColor: 'transparent',
+              flex: 1
             }}>
-            <Camera 
-              style={[styles.camera, this.props.cameraStyle]} 
+            <Camera
+              style={[styles.camera, this.props.cameraStyle]}
               onBarCodeRead={this._handleBarCodeRead.bind(this)}
               type={this.props.cameraType}
             >
@@ -233,9 +234,7 @@ export default class QRCodeScanner extends Component {
         <View style={[styles.infoView, this.props.topViewStyle]}>
           {this._renderTopContent()}
         </View>
-        <View style={[this.props.cameraViewStyle]}>
         {this._renderCamera()}
-        </View>
         <View style={[styles.infoView, this.props.bottomViewStyle]}>
           {this._renderBottomContent()}
         </View>
@@ -246,7 +245,7 @@ export default class QRCodeScanner extends Component {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flex: 1
+    flex: 1,
   },
   infoView: {
     flex: 2,
