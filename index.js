@@ -34,6 +34,7 @@ export default class QRCodeScanner extends Component {
     cameraStyle: PropTypes.any,
     topViewStyle: PropTypes.any,
     bottomViewStyle: PropTypes.any,
+    cameraViewStyle: PropTypes.any,
     topContent: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.string,
@@ -232,7 +233,9 @@ export default class QRCodeScanner extends Component {
         <View style={[styles.infoView, this.props.topViewStyle]}>
           {this._renderTopContent()}
         </View>
+        <View style={[this.props.cameraViewStyle]}>
         {this._renderCamera()}
+        </View>
         <View style={[styles.infoView, this.props.bottomViewStyle]}>
           {this._renderBottomContent()}
         </View>
