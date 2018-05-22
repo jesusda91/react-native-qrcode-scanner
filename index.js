@@ -7,8 +7,6 @@ import {
   StyleSheet,
   Dimensions,
   Vibration,
-  Animated,
-  Easing,
   View,
   Text,
   Platform,
@@ -26,23 +24,10 @@ export default class QRCodeScanner extends Component {
     onRead: PropTypes.func.isRequired,
     reactivate: PropTypes.bool,
     reactivateTimeout: PropTypes.number,
-    fadeIn: PropTypes.bool,
-    showMarker: PropTypes.bool,
     cameraType: PropTypes.oneOf(['front','back']),
-    customMarker: PropTypes.element,
     containerStyle: PropTypes.any,
     cameraStyle: PropTypes.any,
-    topViewStyle: PropTypes.any,
-    bottomViewStyle: PropTypes.any,
     cameraViewStyle: PropTypes.any,
-    topContent: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.string,
-    ]),
-    bottomContent: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.string,
-    ]),
     notAuthorizedView: PropTypes.element,
     permissionDialogTitle: PropTypes.string,
     permissionDialogMessage: PropTypes.string,
@@ -53,8 +38,6 @@ export default class QRCodeScanner extends Component {
     onRead: () => (console.log('QR code scanned!')),
     reactivate: false,
     reactivateTimeout: 0,
-    fadeIn: true,
-    showMarker: false,
     cameraType: 'back',
     notAuthorizedView: (
       <View style={{
@@ -93,7 +76,6 @@ export default class QRCodeScanner extends Component {
     super(props);
     this.state = {
       scanning: false,
-      fadeInOpacity: new Animated.Value(0),
       isAuthorized: false,
       isAuthorizationChecked: false,
     }
@@ -123,22 +105,6 @@ export default class QRCodeScanner extends Component {
         })
     } else {
       this.setState({ isAuthorized: true, isAuthorizationChecked: true })
-    }
-  }
-
-
-  componentDidMount() {
-    if (this.props.fadeIn) {
-      Animated.sequence([
-        Animated.delay(1000),
-        Animated.timing(
-          this.state.fadeInOpacity,
-          {
-            toValue: 1,
-            easing: Easing.inOut(Easing.quad),
-          },
-        )
-      ]).start();
     }
   }
 
@@ -172,42 +138,17 @@ export default class QRCodeScanner extends Component {
   }
 
   _renderCameraMarker() {
-    if (this.props.showMarker) {
-      if (this.props.customMarker) {
-        return this.props.customMarker;
-      } else {
-        return (
-          <View style={styles.rectangleContainer}>
-            <View style={styles.rectangle} />
-          </View>
-        );
-      }
-    }
-    return null;
+    return (
+        <View style={styles.rectangleContainer}>
+        <View style={styles.rectangle} />
+        </View>
+    );
   }
 
   _renderCamera() {
     const { notAuthorizedView, pendingAuthorizationView, cameraType } = this.props
     const { isAuthorized, isAuthorizationChecked } = this.state
     if (isAuthorized) {
-      if (this.props.fadeIn) {
-        return (
-          <Animated.View
-            style={{
-              opacity: this.state.fadeInOpacity,
-              backgroundColor: 'transparent',
-              flex: 1
-            }}>
-            <Camera
-              style={[styles.camera, this.props.cameraStyle]}
-              onBarCodeRead={this._handleBarCodeRead.bind(this)}
-              type={this.props.cameraType}
-            >
-              {this._renderCameraMarker()}
-            </Camera>
-          </Animated.View>
-        )
-      }
       return (
         <Camera
           type={cameraType}
@@ -231,13 +172,7 @@ export default class QRCodeScanner extends Component {
   render() {
     return (
       <View style={[styles.mainContainer, this.props.containerStyle]}>
-        <View style={[styles.infoView, this.props.topViewStyle]}>
-          {this._renderTopContent()}
-        </View>
         {this._renderCamera()}
-        <View style={[styles.infoView, this.props.bottomViewStyle]}>
-          {this._renderBottomContent()}
-        </View>
       </View>
     )
   }
@@ -246,12 +181,6 @@ export default class QRCodeScanner extends Component {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-  },
-  infoView: {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
   },
 
   camera: {
